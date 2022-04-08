@@ -1,7 +1,10 @@
 package com.steelph0enix.integracja.lab2.ui
 
 import com.steelph0enix.integracja.lab2.data.Laptop
+import com.steelph0enix.integracja.lab2.enumerateStringList
 import com.steelph0enix.integracja.lab2.models.LaptopTableModel
+import com.steelph0enix.integracja.lab2.parsers.parseCSVFromFile
+import com.steelph0enix.integracja.lab2.removeLastColumns
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.event.ActionEvent
@@ -35,29 +38,17 @@ class UIController {
     }
 
     private fun onLoadDataFromCSVClicked(e: ActionEvent) {
-        val laptopList = listOf(
-            Laptop(
-                0,
-                "twujstary",
-                69.0,
-                Pair(21, 37),
-                "chuj",
-                false,
-                "sranie",
-                12,
-                34,
-                56,
-                78,
-                "gowno",
-                "kurwa",
-                420,
-                "ruchansko",
-                "sransko"
-            ),
-            Laptop(69, osName = "twuj stary"),
-        )
+        val fileChooser = JFileChooser()
+        if (fileChooser.showOpenDialog(contentFrame) == JFileChooser.APPROVE_OPTION) {
+            val selectedFile = fileChooser.selectedFile
+            val rawCSV = parseCSVFromFile(selectedFile, ';')
+            val normalizedCSV = removeLastColumns(rawCSV, 1)
+            val enumeratedCSV = enumerateStringList(normalizedCSV)
 
-        createDataTable(LaptopTableModel(laptopList))
+            for (line in enumeratedCSV) {
+                println(line)
+            }
+        }
     }
 
     private fun onSaveDataToCSVClicked(e: ActionEvent) {
