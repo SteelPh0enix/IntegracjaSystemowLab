@@ -8,8 +8,12 @@ import org.simpleframework.xml.Root
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-@Root(name="laptops")
-class LaptopListXMLModel(@field:ElementList(inline = true) val laptopList: List<LaptopXMLModel>) {
+@Root(name = "laptops", strict = false)
+class LaptopListXMLModel(
+    @field:ElementList(name = "laptop", inline = true)
+    @param:ElementList(name = "laptop", inline = true)
+    val laptopList: List<LaptopXMLModel> = listOf()
+) {
     @field:Attribute
     var moddate: String = generateModdate()
 
@@ -20,40 +24,99 @@ class LaptopListXMLModel(@field:ElementList(inline = true) val laptopList: List<
     }
 }
 
-@Root(name="laptop")
-class LaptopXMLModel(
-    @field:Attribute val id: Int,
-    @field:Element(required = false) val manufacturer: String?,
-    @field:Element val screen: ScreenXMLModel,
-    @field:Element val processor: CPUXMLModel,
-    @field:Element(required = false) val ram: String?,
-    @field:Element val disc: DiscXMLModel,
-    @field:Element val graphic_card: GPUXMLModel,
-    @field:Element(required = false) val os: String?,
-    @field:Element(required = false) val disc_reader: String?
+@Root(name = "laptop", strict = false)
+data class LaptopXMLModel(
+    @field:Attribute(name = "id", required = true)
+    @param:Attribute(name = "id", required = true)
+    val id: Int = 0,
+
+    @field:Element(name = "manufacturer", required = false)
+    @param:Element(name = "manufacturer", required = false)
+    val manufacturer: String? = null,
+
+    @field:Element(name = "screen", required = true)
+    @param:Element(name = "screen", required = true)
+    val screen: ScreenXMLModel = ScreenXMLModel(),
+
+    @field:Element(name = "processor", required = true)
+    @param:Element(name = "processor", required = true)
+    val processor: CPUXMLModel = CPUXMLModel(),
+
+    @field:Element(name = "ram", required = false)
+    @param:Element(name = "ram", required = false)
+    val ram: String? = null,
+
+    @field:Element(name = "disc", required = true)
+    @param:Element(name = "disc", required = true)
+    val disc: DiscXMLModel = DiscXMLModel(),
+
+    @field:Element(name = "graphic_card", required = true)
+    @param:Element(name = "graphic_card", required = true)
+    val graphic_card: GPUXMLModel = GPUXMLModel(),
+
+    @field:Element(name = "os", required = false)
+    @param:Element(name = "os", required = false)
+    val os: String? = null,
+
+    @field:Element(name = "disc_reader", required = false)
+    @param:Element(name = "disc_reader", required = false)
+    val disc_reader: String? = null
 )
 
+@Root(strict = false)
 class ScreenXMLModel(
-    @field:Attribute(required = false) val touch: String?,
-    @field:Element(required = false) val size: String?,
-    @field:Element(required = false) val resolution: String?,
-    @field:Element(required = false) val type: String?
+    @field:Attribute(name = "touch", required = false)
+    @param:Attribute(name = "touch", required = false)
+    val touch: String? = null,
+
+    @field:Element(name = "size", required = false)
+    @param:Element(name = "size", required = false)
+    val size: String? = null,
+
+    @field:Element(name = "resolution", required = false)
+    @param:Element(name = "resolution", required = false)
+    val resolution: String? = null,
+
+    @field:Element(name = "type", required = false)
+    @param:Element(name = "type", required = false)
+    val type: String? = null
 )
 
+@Root(strict = false)
 class CPUXMLModel(
-    @field:Element(required = false) val name: String?,
-    @field:Element(required = false) val physical_cores: Int?,
-    @field:Element(required = false) val clock_speed: Int?
+    @field:Element(name="name", required = false)
+    @param:Element(name="name", required = false)
+    val name: String? = null,
+
+    @field:Element(name="physical_cores", required = false)
+    @param:Element(name="physical_cores", required = false)
+    val physical_cores: Int? = null,
+
+    @field:Element(name="clock_speed", required = false)
+    @param:Element(name="clock_speed", required = false)
+    val clock_speed: Int? = null
 )
 
+@Root(strict = false)
 class DiscXMLModel(
-    @field:Attribute(required = false) val type: String?,
-    @field:Element(required = false) val storage: String?
+    @field:Attribute(name="type", required = false)
+    @param:Attribute(name="type", required = false)
+    val type: String? = null,
+
+    @field:Element(name="storage", required = false)
+    @param:Element(name="storage", required = false)
+    val storage: String? = null
 )
 
+@Root(strict = false)
 class GPUXMLModel(
-    @field:Element(required = false) val name: String?,
-    @field:Element(required = false) val memory: String?
+    @field:Element(name="name", required = false)
+    @param:Element(name="name", required = false)
+    val name: String? = null,
+
+    @field:Element(name="memory", required = false)
+    @param:Element(name="memory", required = false)
+    val memory: String? = null
 )
 
 fun laptopToXMLModel(laptop: Laptop): LaptopXMLModel {
