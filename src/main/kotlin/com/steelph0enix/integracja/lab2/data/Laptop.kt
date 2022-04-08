@@ -18,6 +18,57 @@ class Laptop(
     var osName: String? = null,
     var externalDriveType: String? = null
 ) {
+
+    fun toStringList(): List<String> {
+        return listOf(
+            id.toString(),
+            manufacturer ?: "",
+            screenDiagonalInches?.toString() ?: "",
+            screenResolutionString() ?: "",
+            screenSurfaceType ?: "",
+            hasTouchscreen?.toString()?.lowercase() ?: "",
+            cpuName ?: "",
+            physicalCoresCount?.toString() ?: "",
+            frequencyMHz?.toString() ?: "",
+            ramSizeGB?.toString() ?: "",
+            hardDriveCapacityGB?.toString() ?: "",
+            hardDriveType ?: "",
+            gpuName ?: "",
+            gpuMemorySizeGB?.toString() ?: "",
+            osName ?: "",
+            externalDriveType ?: ""
+        )
+    }
+
+    companion object {
+        fun fromStringList(properties: List<String>): Laptop {
+            if (properties.size < 16) {
+                throw RuntimeException("Not enough fields in the list to convert it to Laptop (expected: 16, actual: ${properties.size})!")
+            }
+
+            val laptop = Laptop(0)
+
+            laptop.id = properties[0].toIntOrNull() ?: 0
+            laptop.manufacturer = properties[1]
+            laptop.screenDiagonalInches = properties[2].toDoubleOrNull()
+            laptop.screenResolutionFromString(properties[3])
+            laptop.screenSurfaceType = properties[4]
+            laptop.hasTouchscreen = properties[5].toBooleanStrictOrNull()
+            laptop.cpuName = properties[6]
+            laptop.physicalCoresCount = properties[7].toIntOrNull()
+            laptop.frequencyMHz = properties[8].toIntOrNull()
+            laptop.ramSizeGB = properties[9].toIntOrNull()
+            laptop.hardDriveCapacityGB = properties[10].toIntOrNull()
+            laptop.hardDriveType = properties[11]
+            laptop.gpuName = properties[12]
+            laptop.gpuMemorySizeGB = properties[13].toIntOrNull()
+            laptop.osName = properties[14]
+            laptop.externalDriveType = properties[15]
+
+            return laptop
+        }
+    }
+
     fun screenResolutionFromString(resolution: String): Boolean {
         val resolutionSplit = resolution.split("x", ",")
         if (resolutionSplit.size == 2) {
@@ -34,29 +85,6 @@ class Laptop(
         return if (screenResolution != null) "${screenResolution?.first}x${screenResolution?.second}" else null
     }
 
-    fun fromStringList(properties: List<String>) {
-        if (properties.size < 16) {
-            throw RuntimeException("Not enough fields in the list to convert it to Laptop (expected: 16, actual: ${properties.size})!")
-        }
-
-        id = properties[0].toIntOrNull() ?: 0
-        manufacturer = properties[1]
-        screenDiagonalInches = properties[2].toDoubleOrNull()
-        screenResolutionFromString(properties[3])
-        screenSurfaceType = properties[4]
-        hasTouchscreen = properties[5].toBooleanStrictOrNull()
-        cpuName = properties[6]
-        physicalCoresCount = properties[7].toIntOrNull()
-        frequencyMHz = properties[8].toIntOrNull()
-        ramSizeGB = properties[9].toIntOrNull()
-        hardDriveCapacityGB = properties[10].toIntOrNull()
-        hardDriveType = properties[11]
-        gpuName = properties[12]
-        gpuMemorySizeGB = properties[13].toIntOrNull()
-        osName = properties[14]
-        externalDriveType = properties[15]
-    }
-
     override fun toString(): String =
         """Laptop #$id, manufacturer: $manufacturer
     Screen: $screenDiagonalInches", resolution: ${screenResolutionString()}, type: $screenSurfaceType, has touch: $hasTouchscreen
@@ -67,4 +95,6 @@ class Laptop(
     OS: $osName
     External drive: $externalDriveType
 """
+
+
 }

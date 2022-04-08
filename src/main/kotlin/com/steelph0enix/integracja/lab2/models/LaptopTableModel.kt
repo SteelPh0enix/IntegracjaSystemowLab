@@ -105,6 +105,5 @@ class LaptopTableModel(val laptopList: List<Laptop>) : AbstractTableModel() {
             14 -> laptop.osName = newValue as String
             15 -> laptop.externalDriveType = newValue as String
         }
-        print(laptop)
     }
 }
