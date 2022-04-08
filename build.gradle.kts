@@ -14,6 +14,8 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
+    // https://mvnrepository.com/artifact/org.simpleframework/simple-xml
+    implementation("org.simpleframework:simple-xml:2.7.1")
 }
 
 tasks.test {
