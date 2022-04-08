@@ -62,7 +62,7 @@ fun laptopToXMLModel(laptop: Laptop): LaptopXMLModel {
         manufacturer = laptop.manufacturer,
         screen = ScreenXMLModel(
             touch = laptop.hasTouchscreen?.let { if (it) "yes" else "no" },
-            size = laptop.screenDiagonalInches?.let { it.toString() + "\"" },
+            size = laptop.screenDiagonalInches?.toString(),
             resolution = laptop.screenResolutionString(),
             type = laptop.screenSurfaceType
         ),
@@ -89,7 +89,7 @@ fun laptopFromXMLModel(laptopXML: LaptopXMLModel): Laptop {
     return Laptop(
         id = laptopXML.id,
         manufacturer = laptopXML.manufacturer,
-        screenDiagonalInches = laptopXML.screen.size?.removeSuffix("\"")?.toDouble(),
+        screenDiagonalInches = laptopXML.screen.size?.toDouble(),
         screenResolution = Laptop.screenResolutionFromString(laptopXML.screen.resolution),
         screenSurfaceType = laptopXML.screen.type,
         hasTouchscreen = laptopXML.screen.touch?.let { it == "yes" },

@@ -88,10 +88,17 @@ class LaptopTableModel(val laptopList: List<Laptop>) : AbstractTableModel() {
             0 -> laptop.id = newValue as Int
             1 -> laptop.manufacturer = newValue as String
             2 -> laptop.screenDiagonalInches = newValue as Double
-            3 -> if (!laptop.screenResolutionFromString(newValue as String)) showValidationError(
-                "Screen resolution",
-                "invalid format, should be [width]x[height], for example 1920x1080 for 1080p display"
-            )
+            3 -> {
+                val laptopRes = Laptop.screenResolutionFromString(newValue as String)
+                if (laptopRes == null) {
+                    showValidationError(
+                        "Screen resolution",
+                        "invalid format, should be [width]x[height], for example 1920x1080 for 1080p display"
+                    )
+                } else {
+                    laptop.screenResolution = laptopRes
+                }
+            }
             4 -> laptop.screenSurfaceType = newValue as String
             5 -> laptop.hasTouchscreen = newValue as Boolean
             6 -> laptop.cpuName = newValue as String
