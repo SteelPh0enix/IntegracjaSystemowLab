@@ -51,7 +51,7 @@ class Laptop(
             laptop.id = properties[0].toIntOrNull() ?: 0
             laptop.manufacturer = properties[1]
             laptop.screenDiagonalInches = properties[2].toDoubleOrNull()
-            laptop.screenResolutionFromString(properties[3])
+            laptop.screenResolution = screenResolutionFromString(properties[3])
             laptop.screenSurfaceType = properties[4]
             laptop.hasTouchscreen = properties[5].toBooleanStrictOrNull()
             laptop.cpuName = properties[6]
@@ -67,19 +67,20 @@ class Laptop(
 
             return laptop
         }
-    }
 
-    fun screenResolutionFromString(resolution: String): Boolean {
-        val resolutionSplit = resolution.split("x", ",")
-        if (resolutionSplit.size == 2) {
-            val screenWidth = resolutionSplit[0].toInt()
-            val screenHeight = resolutionSplit[1].toInt()
-            screenResolution = Pair(screenWidth, screenHeight)
-            return true
+        fun screenResolutionFromString(resolution: String?): Pair<Int, Int>? {
+            val resolutionSplit = resolution?.split("x", ",")
+            if (resolutionSplit?.size == 2) {
+                val screenWidth = resolutionSplit[0].toInt()
+                val screenHeight = resolutionSplit[1].toInt()
+                return Pair(screenWidth, screenHeight)
+            }
+
+            return null
         }
-
-        return false
     }
+
+
 
     fun screenResolutionString(): String? {
         return if (screenResolution != null) "${screenResolution?.first}x${screenResolution?.second}" else null

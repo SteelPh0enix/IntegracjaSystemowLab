@@ -6,7 +6,7 @@ fun fixImportedLaptopPropertyList(laptopPropertyList: List<List<String>>): List<
         // 1. add first column with laptop indexes
         // 2. remove last, empty column
         // 3. fix laptop fields
-        listOf(index.toString()) + fixLaptopStringListFields(laptopProperties.slice(0..wantedLaptopPropertiesCount))
+        listOf((index + 1).toString()) + fixLaptopStringListFields(laptopProperties.slice(0..wantedLaptopPropertiesCount))
     }
 }
 

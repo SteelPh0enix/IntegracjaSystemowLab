@@ -1,11 +1,14 @@
 package com.steelph0enix.integracja.lab2.ui
 
 import com.steelph0enix.integracja.lab2.data.Laptop
+import com.steelph0enix.integracja.lab2.models.LaptopListXMLModel
 import com.steelph0enix.integracja.lab2.models.LaptopTableModel
+import com.steelph0enix.integracja.lab2.models.laptopToXMLModel
 import com.steelph0enix.integracja.lab2.parsers.breakLaptopPropertyListForExport
 import com.steelph0enix.integracja.lab2.parsers.fixImportedLaptopPropertyList
 import com.steelph0enix.integracja.lab2.parsers.parseCSVFromFile
 import com.steelph0enix.integracja.lab2.parsers.stringListToCSVFile
+import org.simpleframework.xml.core.Persister
 import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.Component
@@ -21,6 +24,8 @@ class UIController {
     private val contentFrame = JFrame("Lab2 - Wojciech Olech - Integracja systemów")
     private val loadDataFromCSVButton = JButton("Load data from CSV")
     private val saveDataToCSVButton = JButton("Save data to CSV")
+    private val loadDataFromXMLButton = JButton("Load data from XML")
+    private val saveDataToXMLButton = JButton("Save data to XML")
     private var dataTable: JTable? = null
     private var dataTablePane: JScrollPane? = null
 
@@ -40,7 +45,7 @@ class UIController {
             val itemValue = model.getValueAt(row, column)
 
             if (itemValue == null) {
-                component.background = Color.red
+                component.background = Color.orange
             } else if (itemValue is String && itemValue.isEmpty()) {
                 component.background = Color.orange
             } else if (!isSelected) {
@@ -60,8 +65,14 @@ class UIController {
         loadDataFromCSVButton.addActionListener(this::onLoadDataFromCSVClicked)
         buttonsPanel.add(loadDataFromCSVButton)
 
+        loadDataFromXMLButton.addActionListener(this::onLoadDataFromXMLClicked)
+        buttonsPanel.add(loadDataFromXMLButton)
+
         saveDataToCSVButton.addActionListener(this::onSaveDataToCSVClicked)
         buttonsPanel.add(saveDataToCSVButton)
+
+        saveDataToXMLButton.addActionListener(this::onSaveDataToXMLClicked)
+        buttonsPanel.add(saveDataToXMLButton)
 
         contentFrame.add(buttonsPanel, BorderLayout.PAGE_START)
         contentFrame.size = Dimension(width, height)
@@ -98,6 +109,35 @@ class UIController {
             val laptopStringList: List<List<String>> = laptopListModel.laptopList.map { it.toStringList() }
             val exportableLaptopList = breakLaptopPropertyListForExport(laptopStringList)
             stringListToCSVFile(selectedFile, exportableLaptopList, ';')
+        }
+    }
+
+    private fun onLoadDataFromXMLClicked(e: ActionEvent) {
+
+    }
+
+    private fun onSaveDataToXMLClicked(e: ActionEvent) {
+        if (dataTable == null) {
+            return
+        }
+
+
+        val fileChooser = JFileChooser()
+        if (fileChooser.showSaveDialog(contentFrame) == JFileChooser.APPROVE_OPTION) {
+            var selectedFile = fileChooser.selectedFile
+            if (selectedFile.extension.isEmpty()) {
+                selectedFile = File(selectedFile.absolutePath + ".xml")
+            }
+
+            val laptopListModel = dataTable?.model as LaptopTableModel
+            val laptopXMLList = laptopListModel.laptopList.map { laptop ->
+                laptopToXMLModel(laptop)
+            }
+
+            val laptopListXMLModel = LaptopListXMLModel(laptopXMLList)
+
+            val serializer = Persister()
+            serializer.write(laptopListXMLModel, selectedFile)
         }
     }
 
