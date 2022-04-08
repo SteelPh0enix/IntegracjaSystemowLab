@@ -3,6 +3,7 @@ package com.steelph0enix.integracja.lab2.ui
 import com.steelph0enix.integracja.lab2.data.Laptop
 import com.steelph0enix.integracja.lab2.models.LaptopListXMLModel
 import com.steelph0enix.integracja.lab2.models.LaptopTableModel
+import com.steelph0enix.integracja.lab2.models.laptopFromXMLModel
 import com.steelph0enix.integracja.lab2.models.laptopToXMLModel
 import com.steelph0enix.integracja.lab2.parsers.breakLaptopPropertyListForExport
 import com.steelph0enix.integracja.lab2.parsers.fixImportedLaptopPropertyList
@@ -99,6 +100,7 @@ class UIController {
         }
 
         val fileChooser = JFileChooser()
+        fileChooser.fileFilter = FileNameExtensionFilter("Text CSV files", "txt")
         if (fileChooser.showSaveDialog(contentFrame) == JFileChooser.APPROVE_OPTION) {
             var selectedFile = fileChooser.selectedFile
             if (selectedFile.extension.isEmpty()) {
@@ -113,7 +115,16 @@ class UIController {
     }
 
     private fun onLoadDataFromXMLClicked(e: ActionEvent) {
+        val fileChooser = JFileChooser()
+        fileChooser.fileFilter = FileNameExtensionFilter("XML files", "xml")
+        if (fileChooser.showOpenDialog(contentFrame) == JFileChooser.APPROVE_OPTION) {
+            val selectedFile = fileChooser.selectedFile
+            val serializer = Persister()
 
+            val xmlModel = serializer.read(LaptopListXMLModel::class.java, selectedFile)
+            val laptopList = xmlModel.laptopList.map { laptop -> laptopFromXMLModel(laptop) }
+            createDataTable(LaptopTableModel(laptopList))
+        }
     }
 
     private fun onSaveDataToXMLClicked(e: ActionEvent) {
@@ -123,6 +134,7 @@ class UIController {
 
 
         val fileChooser = JFileChooser()
+        fileChooser.fileFilter = FileNameExtensionFilter("XML files", "xml")
         if (fileChooser.showSaveDialog(contentFrame) == JFileChooser.APPROVE_OPTION) {
             var selectedFile = fileChooser.selectedFile
             if (selectedFile.extension.isEmpty()) {
