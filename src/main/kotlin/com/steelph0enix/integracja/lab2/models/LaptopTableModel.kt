@@ -44,6 +44,8 @@ class LaptopTableModel(val laptopList: List<Laptop>) : AbstractTableModel() {
         String::class.java,     // external drive type
     )
 
+    private var valueModificationStates = MutableList(laptopList.size) { MutableList(columnNames.size) { false } }
+
     override fun getColumnClass(columnIndex: Int): Class<out Any> = columnTypes[columnIndex]
     override fun getColumnName(column: Int): String = columnNames[column]
     override fun getRowCount(): Int = laptopList.size
@@ -84,6 +86,7 @@ class LaptopTableModel(val laptopList: List<Laptop>) : AbstractTableModel() {
 
     override fun setValueAt(newValue: Any?, rowIndex: Int, columnIndex: Int) {
         val laptop = laptopList[rowIndex]
+
         when (columnIndex) {
             0 -> laptop.id = newValue as Int
             1 -> laptop.manufacturer = newValue as String
@@ -95,6 +98,7 @@ class LaptopTableModel(val laptopList: List<Laptop>) : AbstractTableModel() {
                         "Screen resolution",
                         "invalid format, should be [width]x[height], for example 1920x1080 for 1080p display"
                     )
+                    return
                 } else {
                     laptop.screenResolution = laptopRes
                 }
@@ -112,5 +116,13 @@ class LaptopTableModel(val laptopList: List<Laptop>) : AbstractTableModel() {
             14 -> laptop.osName = newValue as String
             15 -> laptop.externalDriveType = newValue as String
         }
+
+        valueModificationStates[rowIndex][columnIndex] = true
+    }
+
+    fun wasColumnModified(rowIndex: Int, columnIndex: Int) = valueModificationStates[rowIndex][columnIndex]
+
+    fun resetModificationState() {
+        valueModificationStates = MutableList(laptopList.size) { MutableList(columnNames.size) { false } }
     }
 }

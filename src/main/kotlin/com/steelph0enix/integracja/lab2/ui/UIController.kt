@@ -17,6 +17,7 @@ import java.awt.Dimension
 import java.awt.event.ActionEvent
 import java.io.File
 import javax.swing.*
+import javax.swing.border.EmptyBorder
 import javax.swing.filechooser.FileNameExtensionFilter
 import javax.swing.table.DefaultTableCellRenderer
 import javax.swing.table.TableModel
@@ -27,6 +28,7 @@ class UIController {
     private val saveDataToCSVButton = JButton("Save data to CSV")
     private val loadDataFromXMLButton = JButton("Load data from XML")
     private val saveDataToXMLButton = JButton("Save data to XML")
+    private val userMessageLabel = JLabel("")
     private var dataTable: JTable? = null
     private var dataTablePane: JScrollPane? = null
 
@@ -50,7 +52,11 @@ class UIController {
             } else if (itemValue is String && itemValue.isEmpty()) {
                 component.background = Color.orange
             } else if (!isSelected) {
-                component.background = defaultBackgroundColor
+                if (model.wasColumnModified(row, column)) {
+                    component.background = defaultBackgroundColor
+                } else {
+                    component.background = Color.LIGHT_GRAY
+                }
             }
 
             return component
@@ -58,7 +64,7 @@ class UIController {
     }
 
     fun createAndShowUI(width: Int, height: Int) {
-        contentFrame.layout = BorderLayout()
+        contentFrame.layout = BorderLayout(5, 5)
         contentFrame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
 
         val buttonsPanel = JPanel()
@@ -75,7 +81,12 @@ class UIController {
         saveDataToXMLButton.addActionListener(this::onSaveDataToXMLClicked)
         buttonsPanel.add(saveDataToXMLButton)
 
+        val utilsPanel = JPanel()
+        utilsPanel.border = EmptyBorder(5, 5, 5, 5)
+        utilsPanel.add(userMessageLabel)
+
         contentFrame.add(buttonsPanel, BorderLayout.PAGE_START)
+        contentFrame.add(utilsPanel, BorderLayout.PAGE_END)
         contentFrame.size = Dimension(width, height)
         contentFrame.setLocationRelativeTo(null)
         contentFrame.isVisible = true
@@ -91,6 +102,10 @@ class UIController {
             val laptopStringList = fixImportedLaptopPropertyList(rawCSV)
             val laptopList = laptopStringList.map { Laptop.fromStringList(it) }
             createDataTable(LaptopTableModel(laptopList))
+
+            val rowsAmount = laptopList.size
+
+            setInfoMessage("Loaded $rowsAmount rows from CSV file $selectedFile")
         }
     }
 
@@ -111,6 +126,10 @@ class UIController {
             val laptopStringList: List<List<String>> = laptopListModel.laptopList.map { it.toStringList() }
             val exportableLaptopList = breakLaptopPropertyListForExport(laptopStringList)
             stringListToCSVFile(selectedFile, exportableLaptopList, ';')
+            laptopListModel.resetModificationState()
+            refreshGUI()
+
+            setInfoMessage("Data saved as CSV in $selectedFile")
         }
     }
 
@@ -124,6 +143,10 @@ class UIController {
             val xmlModel = serializer.read(LaptopListXMLModel::class.java, selectedFile)
             val laptopList = xmlModel.laptopList.map { laptop -> laptopFromXMLModel(laptop) }
             createDataTable(LaptopTableModel(laptopList))
+
+            val rowsAmount = laptopList.size
+
+            setInfoMessage("Loaded $rowsAmount from XML file $selectedFile")
         }
     }
 
@@ -150,6 +173,10 @@ class UIController {
 
             val serializer = Persister()
             serializer.write(laptopListXMLModel, selectedFile)
+            laptopListModel.resetModificationState()
+            refreshGUI()
+
+            setInfoMessage("Data saved as XML in $selectedFile")
         }
     }
 
@@ -177,7 +204,12 @@ class UIController {
         dataTable!!.setDefaultRenderer(Integer::class.java, cellRenderer)
         dataTable!!.setDefaultRenderer(Double::class.javaObjectType, cellRenderer)
         dataTable!!.setDefaultRenderer(String::class.java, cellRenderer)
+        dataTable!!.setDefaultRenderer(Boolean::class.javaObjectType, cellRenderer)
         contentFrame.add(dataTablePane!!, BorderLayout.CENTER)
         refreshGUI()
+    }
+
+    private fun setInfoMessage(message: String) {
+        userMessageLabel.text = message
     }
 }
