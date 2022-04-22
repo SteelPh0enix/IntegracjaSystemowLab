@@ -84,38 +84,38 @@ class ScreenXMLModel(
 
 @Root(strict = false)
 class CPUXMLModel(
-    @field:Element(name="name", required = false)
-    @param:Element(name="name", required = false)
+    @field:Element(name = "name", required = false)
+    @param:Element(name = "name", required = false)
     val name: String? = null,
 
-    @field:Element(name="physical_cores", required = false)
-    @param:Element(name="physical_cores", required = false)
+    @field:Element(name = "physical_cores", required = false)
+    @param:Element(name = "physical_cores", required = false)
     val physical_cores: Int? = null,
 
-    @field:Element(name="clock_speed", required = false)
-    @param:Element(name="clock_speed", required = false)
+    @field:Element(name = "clock_speed", required = false)
+    @param:Element(name = "clock_speed", required = false)
     val clock_speed: Int? = null
 )
 
 @Root(strict = false)
 class DiscXMLModel(
-    @field:Attribute(name="type", required = false)
-    @param:Attribute(name="type", required = false)
+    @field:Attribute(name = "type", required = false)
+    @param:Attribute(name = "type", required = false)
     val type: String? = null,
 
-    @field:Element(name="storage", required = false)
-    @param:Element(name="storage", required = false)
+    @field:Element(name = "storage", required = false)
+    @param:Element(name = "storage", required = false)
     val storage: String? = null
 )
 
 @Root(strict = false)
 class GPUXMLModel(
-    @field:Element(name="name", required = false)
-    @param:Element(name="name", required = false)
+    @field:Element(name = "name", required = false)
+    @param:Element(name = "name", required = false)
     val name: String? = null,
 
-    @field:Element(name="memory", required = false)
-    @param:Element(name="memory", required = false)
+    @field:Element(name = "memory", required = false)
+    @param:Element(name = "memory", required = false)
     val memory: String? = null
 )
 

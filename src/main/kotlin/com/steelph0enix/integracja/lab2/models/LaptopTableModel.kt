@@ -88,9 +88,10 @@ class LaptopTableModel(val laptopList: List<Laptop>) : AbstractTableModel() {
         val laptop = laptopList[rowIndex]
 
         when (columnIndex) {
-            0 -> laptop.id = newValue as Int
-            1 -> laptop.manufacturer = newValue as String
-            2 -> laptop.screenDiagonalInches = newValue as Double
+            0 -> if (newValue as Int != laptop.id) laptop.id = newValue else return
+            1 -> if (newValue as String != laptop.manufacturer) laptop.manufacturer = newValue else return
+            2 -> if (newValue as Double != laptop.screenDiagonalInches) laptop.screenDiagonalInches =
+                newValue else return
             3 -> {
                 val laptopRes = Laptop.screenResolutionFromString(newValue as String)
                 if (laptopRes == null) {
@@ -100,21 +101,21 @@ class LaptopTableModel(val laptopList: List<Laptop>) : AbstractTableModel() {
                     )
                     return
                 } else {
-                    laptop.screenResolution = laptopRes
+                    if (laptopRes != laptop.screenResolution) laptop.screenResolution = laptopRes else return
                 }
             }
-            4 -> laptop.screenSurfaceType = newValue as String
-            5 -> laptop.hasTouchscreen = newValue as Boolean
-            6 -> laptop.cpuName = newValue as String
-            7 -> laptop.physicalCoresCount = newValue as Int
-            8 -> laptop.frequencyMHz = newValue as Int
-            9 -> laptop.ramSizeGB = newValue as Int
-            10 -> laptop.hardDriveCapacityGB = newValue as Int
-            11 -> laptop.hardDriveType = newValue as String
-            12 -> laptop.gpuName = newValue as String
-            13 -> laptop.gpuMemorySizeGB = newValue as Int
-            14 -> laptop.osName = newValue as String
-            15 -> laptop.externalDriveType = newValue as String
+            4 -> if (newValue as String != laptop.screenSurfaceType) laptop.screenSurfaceType = newValue else return
+            5 -> if (newValue as Boolean != laptop.hasTouchscreen) laptop.hasTouchscreen = newValue else return
+            6 -> if (newValue as String != laptop.cpuName) laptop.cpuName = newValue else return
+            7 -> if (newValue as Int != laptop.physicalCoresCount) laptop.physicalCoresCount = newValue else return
+            8 -> if (newValue as Int != laptop.frequencyMHz) laptop.frequencyMHz = newValue else return
+            9 -> if (newValue as Int != laptop.ramSizeGB) laptop.ramSizeGB = newValue else return
+            10 -> if (newValue as Int != laptop.hardDriveCapacityGB) laptop.hardDriveCapacityGB = newValue else return
+            11 -> if (newValue as String != laptop.hardDriveType) laptop.hardDriveType = newValue else return
+            12 -> if (newValue as String != laptop.gpuName) laptop.gpuName = newValue else return
+            13 -> if (newValue as Int != laptop.gpuMemorySizeGB) laptop.gpuMemorySizeGB = newValue else return
+            14 -> if (newValue as String != laptop.osName) laptop.osName = newValue else return
+            15 -> if (newValue as String != laptop.externalDriveType) laptop.externalDriveType = newValue else return
         }
 
         valueModificationStates[rowIndex][columnIndex] = true

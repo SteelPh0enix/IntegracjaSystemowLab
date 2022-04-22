@@ -81,7 +81,6 @@ class Laptop(
     }
 
 
-
     fun screenResolutionString(): String? {
         return if (screenResolution != null) "${screenResolution?.first}x${screenResolution?.second}" else null
     }
