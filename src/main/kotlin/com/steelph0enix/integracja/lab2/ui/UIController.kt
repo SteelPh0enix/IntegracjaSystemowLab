@@ -47,7 +47,9 @@ class UIController {
             val model = table?.model as LaptopTableModel
             val itemValue = model.getValueAt(row, column)
 
-            if (itemValue == null) {
+            if (model.isRowDuplicate(row)) {
+                component.background = Color.RED
+            } else if (itemValue == null) {
                 component.background = Color.orange
             } else if (itemValue is String && itemValue.isEmpty()) {
                 component.background = Color.orange

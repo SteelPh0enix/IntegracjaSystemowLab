@@ -5,7 +5,26 @@ import javax.swing.JFrame
 import javax.swing.JOptionPane
 import javax.swing.table.AbstractTableModel
 
+fun <T> isDuplicateOfPreviousElement(elements: List<T>, elementIndex: Int): Boolean {
+    val element = elements[elementIndex]
+    for (i in 0 until elementIndex) {
+        if (element == elements[i]) {
+            println("Found duplicate, element $i")
+            return true
+        }
+        println("Element $i is not a duplicate")
+    }
+
+    return false
+}
+
 class LaptopTableModel(val laptopList: List<Laptop>) : AbstractTableModel() {
+    private var isDuplicateRowStates = mutableListOf<Boolean>()
+
+    init {
+        markDuplicates()
+    }
+
     private val columnNames = listOf(
         "Lp.",
         "Producent",
@@ -59,6 +78,13 @@ class LaptopTableModel(val laptopList: List<Laptop>) : AbstractTableModel() {
             "Validation error",
             JOptionPane.ERROR_MESSAGE
         )
+    }
+
+    private fun markDuplicates() {
+        isDuplicateRowStates = mutableListOf()
+        for (laptopIndex in laptopList.indices) {
+            isDuplicateRowStates.add(isDuplicateOfPreviousElement(laptopList, laptopIndex))
+        }
     }
 
     override fun getValueAt(rowIndex: Int, columnIndex: Int): Any? {
@@ -119,6 +145,7 @@ class LaptopTableModel(val laptopList: List<Laptop>) : AbstractTableModel() {
         }
 
         valueModificationStates[rowIndex][columnIndex] = true
+        markDuplicates()
     }
 
     fun wasColumnModified(rowIndex: Int, columnIndex: Int) = valueModificationStates[rowIndex][columnIndex]
@@ -126,4 +153,6 @@ class LaptopTableModel(val laptopList: List<Laptop>) : AbstractTableModel() {
     fun resetModificationState() {
         valueModificationStates = MutableList(laptopList.size) { MutableList(columnNames.size) { false } }
     }
+
+    fun isRowDuplicate(rowIndex: Int) = isDuplicateRowStates[rowIndex]
 }

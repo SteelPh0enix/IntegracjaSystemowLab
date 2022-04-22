@@ -96,5 +96,23 @@ class Laptop(
     External drive: $externalDriveType
 """
 
+    override fun equals(other: Any?): Boolean {
+        val otherLaptop = other as Laptop
+        return otherLaptop.manufacturer == manufacturer &&
+                otherLaptop.screenDiagonalInches == screenDiagonalInches &&
+                otherLaptop.screenResolution == screenResolution &&
+                otherLaptop.screenSurfaceType == screenSurfaceType &&
+                otherLaptop.hasTouchscreen == hasTouchscreen &&
+                otherLaptop.cpuName == cpuName &&
+                otherLaptop.physicalCoresCount == physicalCoresCount &&
+                otherLaptop.frequencyMHz == frequencyMHz &&
+                otherLaptop.ramSizeGB == ramSizeGB &&
+                otherLaptop.hardDriveCapacityGB == hardDriveCapacityGB &&
+                otherLaptop.hardDriveType == hardDriveType &&
+                otherLaptop.gpuName == gpuName &&
+                otherLaptop.gpuMemorySizeGB == gpuMemorySizeGB &&
+                otherLaptop.osName == osName &&
+                otherLaptop.externalDriveType == externalDriveType
+    }
 
 }
