@@ -1,5 +1,6 @@
 package com.steelph0enix.integracja.lab2.ui
 
+import com.steelph0enix.integracja.lab2.SQLiteManager
 import com.steelph0enix.integracja.lab2.data.Laptop
 import com.steelph0enix.integracja.lab2.models.LaptopListXMLModel
 import com.steelph0enix.integracja.lab2.models.LaptopTableModel
@@ -28,9 +29,12 @@ class UIController {
     private val saveDataToCSVButton = JButton("Save data to CSV")
     private val loadDataFromXMLButton = JButton("Load data from XML")
     private val saveDataToXMLButton = JButton("Save data to XML")
+    private val saveDataToDatabase = JButton("Save data to database")
+    private val loadDataFromDatabase = JButton("Load data from database")
     private val userMessageLabel = JLabel("")
     private var dataTable: JTable? = null
     private var dataTablePane: JScrollPane? = null
+    private val databaseManager = SQLiteManager()
 
     private class LaptopTableCellRenderer : DefaultTableCellRenderer() {
         val defaultBackgroundColor: Color? = background
@@ -77,11 +81,17 @@ class UIController {
         loadDataFromXMLButton.addActionListener(this::onLoadDataFromXMLClicked)
         buttonsPanel.add(loadDataFromXMLButton)
 
+        loadDataFromDatabase.addActionListener(this::onLoadDataFromDatabaseClicked)
+        buttonsPanel.add(loadDataFromDatabase)
+
         saveDataToCSVButton.addActionListener(this::onSaveDataToCSVClicked)
         buttonsPanel.add(saveDataToCSVButton)
 
         saveDataToXMLButton.addActionListener(this::onSaveDataToXMLClicked)
         buttonsPanel.add(saveDataToXMLButton)
+
+        saveDataToDatabase.addActionListener(this::onSaveDataToDatabaseClicked)
+        buttonsPanel.add(saveDataToDatabase)
 
         val utilsPanel = JPanel()
         utilsPanel.border = EmptyBorder(5, 5, 5, 5)
@@ -108,7 +118,7 @@ class UIController {
 
             val rowsAmount = laptopList.size
 
-            setInfoMessage("Loaded $rowsAmount rows from CSV file with ${tableModel.duplicatesCount()} duplicates")
+            setInfoMessage("Loaded $rowsAmount items from CSV file with ${tableModel.duplicatesCount()} duplicates")
         }
     }
 
@@ -126,7 +136,8 @@ class UIController {
             }
 
             val laptopListModel = dataTable?.model as LaptopTableModel
-            val laptopStringList: List<List<String>> = laptopListModel.laptopListWithoutDuplicates().map { it.toStringList() }
+            val laptopStringList: List<List<String>> =
+                laptopListModel.laptopListWithoutDuplicates().map { it.toStringList() }
             val exportableLaptopList = breakLaptopPropertyListForExport(laptopStringList)
             stringListToCSVFile(selectedFile, exportableLaptopList, ';')
             laptopListModel.resetModificationState()
@@ -150,7 +161,7 @@ class UIController {
 
             val rowsAmount = laptopList.size
 
-            setInfoMessage("Loaded $rowsAmount from XML file, with ${tableModel.duplicatesCount()} duplicates")
+            setInfoMessage("Loaded $rowsAmount items from XML file, with ${tableModel.duplicatesCount()} duplicates")
         }
     }
 
@@ -181,6 +192,47 @@ class UIController {
             refreshGUI()
 
             setInfoMessage("Data saved as XML in $selectedFile")
+        }
+    }
+
+    private fun onLoadDataFromDatabaseClicked(e: ActionEvent) {
+        val fileChooser = JFileChooser()
+        fileChooser.fileFilter = FileNameExtensionFilter("SQLite files", "sqlite")
+        if (fileChooser.showOpenDialog(contentFrame) == JFileChooser.APPROVE_OPTION) {
+            val selectedFile = fileChooser.selectedFile
+            val serializer = Persister()
+
+            val laptopList = databaseManager.readLaptopListFromDatabase(selectedFile.path)
+            val tableModel = LaptopTableModel(laptopList)
+            createDataTable(tableModel)
+
+            val rowsAmount = laptopList.size
+
+            setInfoMessage("Loaded $rowsAmount items from SQLite database, with ${tableModel.duplicatesCount()} duplicates")
+        }
+
+    }
+    private fun onSaveDataToDatabaseClicked(e: ActionEvent) {
+        if (dataTable == null) {
+            return
+        }
+
+        val fileChooser = JFileChooser()
+        fileChooser.fileFilter = FileNameExtensionFilter("SQLite database", "sqlite")
+        if (fileChooser.showSaveDialog(contentFrame) == JFileChooser.APPROVE_OPTION) {
+            var selectedFile = fileChooser.selectedFile
+            if (selectedFile.extension.isEmpty()) {
+                selectedFile = File(selectedFile.absolutePath + ".sqlite")
+            }
+
+            val laptopListModel = dataTable?.model as LaptopTableModel
+            val laptopList = laptopListModel.laptopListWithoutDuplicates()
+            databaseManager.saveLaptopListToDatabase(selectedFile.path, laptopList)
+
+            laptopListModel.resetModificationState()
+            refreshGUI()
+
+            setInfoMessage("Data saved in SQLite database in $selectedFile")
         }
     }
 

@@ -9,7 +9,7 @@ class Laptop(
     var hasTouchscreen: Boolean? = null,
     var cpuName: String? = null,
     var physicalCoresCount: Int? = null,
-    var frequencyMHz: Int? = null,
+    var cpuFrequencyMHz: Int? = null,
     var ramSizeGB: Int? = null,
     var hardDriveCapacityGB: Int? = null,
     var hardDriveType: String? = null,
@@ -29,7 +29,7 @@ class Laptop(
             hasTouchscreen?.toString()?.lowercase() ?: "",
             cpuName ?: "",
             physicalCoresCount?.toString() ?: "",
-            frequencyMHz?.toString() ?: "",
+            cpuFrequencyMHz?.toString() ?: "",
             ramSizeGB?.toString() ?: "",
             hardDriveCapacityGB?.toString() ?: "",
             hardDriveType ?: "",
@@ -56,7 +56,7 @@ class Laptop(
             laptop.hasTouchscreen = properties[5].toBooleanStrictOrNull()
             laptop.cpuName = properties[6]
             laptop.physicalCoresCount = properties[7].toIntOrNull()
-            laptop.frequencyMHz = properties[8].toIntOrNull()
+            laptop.cpuFrequencyMHz = properties[8].toIntOrNull()
             laptop.ramSizeGB = properties[9].toIntOrNull()
             laptop.hardDriveCapacityGB = properties[10].toIntOrNull()
             laptop.hardDriveType = properties[11]
@@ -88,7 +88,7 @@ class Laptop(
     override fun toString(): String =
         """Laptop #$id, manufacturer: $manufacturer
     Screen: $screenDiagonalInches", resolution: ${screenResolutionString()}, type: $screenSurfaceType, has touch: $hasTouchscreen
-    CPU: $cpuName, $physicalCoresCount cores, ${frequencyMHz}MHz
+    CPU: $cpuName, $physicalCoresCount cores, ${cpuFrequencyMHz}MHz
     RAM size: $ramSizeGB
     HDD: ${hardDriveCapacityGB}GB, type: $hardDriveType
     GPU: $gpuName, memory: ${gpuMemorySizeGB}GB
@@ -105,7 +105,7 @@ class Laptop(
                 otherLaptop.hasTouchscreen == hasTouchscreen &&
                 otherLaptop.cpuName == cpuName &&
                 otherLaptop.physicalCoresCount == physicalCoresCount &&
-                otherLaptop.frequencyMHz == frequencyMHz &&
+                otherLaptop.cpuFrequencyMHz == cpuFrequencyMHz &&
                 otherLaptop.ramSizeGB == ramSizeGB &&
                 otherLaptop.hardDriveCapacityGB == hardDriveCapacityGB &&
                 otherLaptop.hardDriveType == hardDriveType &&

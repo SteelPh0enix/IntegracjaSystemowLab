@@ -16,6 +16,9 @@ dependencies {
     testImplementation(kotlin("test"))
     // https://mvnrepository.com/artifact/org.simpleframework/simple-xml
     implementation("org.simpleframework:simple-xml:2.7.1")
+    implementation("org.jetbrains.exposed:exposed-core:0.38.2")
+    implementation("org.jetbrains.exposed:exposed-jdbc:0.38.2")
+    implementation("org.xerial:sqlite-jdbc:3.36.0.3")
 }
 
 tasks.test {

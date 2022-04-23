@@ -107,7 +107,7 @@ class LaptopTableModel(val laptopList: List<Laptop>) : AbstractTableModel() {
             5 -> laptop.hasTouchscreen
             6 -> laptop.cpuName
             7 -> laptop.physicalCoresCount
-            8 -> laptop.frequencyMHz
+            8 -> laptop.cpuFrequencyMHz
             9 -> laptop.ramSizeGB
             10 -> laptop.hardDriveCapacityGB
             11 -> laptop.hardDriveType
@@ -143,7 +143,7 @@ class LaptopTableModel(val laptopList: List<Laptop>) : AbstractTableModel() {
             5 -> if (newValue as Boolean != laptop.hasTouchscreen) laptop.hasTouchscreen = newValue else return
             6 -> if (newValue as String != laptop.cpuName) laptop.cpuName = newValue else return
             7 -> if (newValue as Int != laptop.physicalCoresCount) laptop.physicalCoresCount = newValue else return
-            8 -> if (newValue as Int != laptop.frequencyMHz) laptop.frequencyMHz = newValue else return
+            8 -> if (newValue as Int != laptop.cpuFrequencyMHz) laptop.cpuFrequencyMHz = newValue else return
             9 -> if (newValue as Int != laptop.ramSizeGB) laptop.ramSizeGB = newValue else return
             10 -> if (newValue as Int != laptop.hardDriveCapacityGB) laptop.hardDriveCapacityGB = newValue else return
             11 -> if (newValue as String != laptop.hardDriveType) laptop.hardDriveType = newValue else return

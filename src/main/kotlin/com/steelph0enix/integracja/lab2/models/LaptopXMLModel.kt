@@ -132,7 +132,7 @@ fun laptopToXMLModel(laptop: Laptop): LaptopXMLModel {
         processor = CPUXMLModel(
             name = laptop.cpuName,
             physical_cores = laptop.physicalCoresCount,
-            clock_speed = laptop.frequencyMHz
+            clock_speed = laptop.cpuFrequencyMHz
         ),
         ram = laptop.ramSizeGB?.let { it.toString() + "GB" },
         disc = DiscXMLModel(
@@ -158,7 +158,7 @@ fun laptopFromXMLModel(laptopXML: LaptopXMLModel): Laptop {
         hasTouchscreen = laptopXML.screen.touch?.let { it == "yes" },
         cpuName = laptopXML.processor.name,
         physicalCoresCount = laptopXML.processor.physical_cores,
-        frequencyMHz = laptopXML.processor.clock_speed,
+        cpuFrequencyMHz = laptopXML.processor.clock_speed,
         ramSizeGB = laptopXML.ram?.uppercase()?.removeSuffix("GB")?.toIntOrNull(),
         hardDriveCapacityGB = laptopXML.disc.storage?.uppercase()?.removeSuffix("GB")?.toIntOrNull(),
         hardDriveType = laptopXML.disc.type,

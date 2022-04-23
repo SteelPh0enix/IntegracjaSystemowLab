@@ -8,6 +8,6 @@ fun main(args: Array<String>) {
     SwingUtilities.invokeLater {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
         val ui = UIController()
-        ui.createAndShowUI(800, 600)
+        ui.createAndShowUI(1000, 600)
     }
 }
