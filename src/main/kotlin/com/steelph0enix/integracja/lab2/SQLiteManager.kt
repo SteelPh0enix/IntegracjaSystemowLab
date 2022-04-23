@@ -49,16 +49,36 @@ class SQLiteManager {
         return laptopList
     }
 
-    private fun findLastBackupFile(databasePath: String, maxBackups: Int = 100): String? {
+    private fun getBackupFile(databasePath: String, backupIndex: Int): File {
+        return File("$databasePath.backup${backupIndex}")
+    }
+
+    private fun findLastBackupFileIndex(databasePath: String, maxBackups: Int = 10): Int? {
         var backupIndex = 1;
-        while (File("$databasePath.backup$backupIndex").exists() && backupIndex <= maxBackups) {
+        while (getBackupFile(databasePath, backupIndex).exists() && backupIndex <= maxBackups) {
             backupIndex++
         }
 
         if (backupIndex > maxBackups) {
             return null
         }
-        return "$databasePath.backup$backupIndex"
+        return backupIndex - 1
+    }
+
+    private fun findNextBackupFile(databasePath: String, maxBackups: Int = 10): File? {
+        val lastBackupFileIndex = findLastBackupFileIndex(databasePath, maxBackups)
+        if (lastBackupFileIndex != null) {
+            return getBackupFile(databasePath, lastBackupFileIndex + 1)
+        }
+        return null
+    }
+
+    private fun findLastBackupFile(databasePath: String, maxBackups: Int = 10): File? {
+        val lastBackupFileIndex = findLastBackupFileIndex(databasePath, maxBackups)
+        if (lastBackupFileIndex != null) {
+            return getBackupFile(databasePath, lastBackupFileIndex)
+        }
+        return null
     }
 
     private fun backupExistingDatabaseIfExists(
@@ -67,10 +87,9 @@ class SQLiteManager {
     ) {
         val dbFile = File(databasePath)
         if (dbFile.exists()) {
-            val lastBackupFile = findLastBackupFile(databasePath)
-            if (lastBackupFile != null) {
-                val dbBackupFile = File(lastBackupFile)
-                dbFile.copyTo(dbBackupFile)
+            val nextBackupFile = findNextBackupFile(databasePath)
+            if (nextBackupFile != null) {
+                dbFile.copyTo(nextBackupFile)
                 if (deleteOriginal) {
                     dbFile.delete()
                 }
@@ -78,6 +97,10 @@ class SQLiteManager {
                 throw Exception("Cannot create backup file, delete some of the existing backups first!")
             }
         }
+    }
+
+    fun restoreLastBackup(databasePath: String) {
+        findLastBackupFile(databasePath)?.copyTo(File(databasePath), overwrite = true)
     }
 
     fun saveLaptopListToDatabase(databasePath: String, laptopList: List<Laptop>) {

@@ -10,7 +10,10 @@ import com.steelph0enix.integracja.lab2.parsers.breakLaptopPropertyListForExport
 import com.steelph0enix.integracja.lab2.parsers.fixImportedLaptopPropertyList
 import com.steelph0enix.integracja.lab2.parsers.parseCSVFromFile
 import com.steelph0enix.integracja.lab2.parsers.stringListToCSVFile
+import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.simpleframework.xml.core.Persister
+import org.sqlite.SQLiteErrorCode
+import org.sqlite.SQLiteException
 import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.Component
@@ -113,6 +116,15 @@ class UIController {
         if (dataTable != null) {
             reloadTable()
         }
+    }
+
+    private fun showErrorBox(title: String, message: String) {
+        JOptionPane.showMessageDialog(
+            JFrame(),
+            message,
+            title,
+            JOptionPane.ERROR_MESSAGE
+        )
     }
 
     private fun shouldVerifyIDs() = verifyIDsCheckbox.isSelected
@@ -225,6 +237,7 @@ class UIController {
         }
 
     }
+
     private fun onSaveDataToDatabaseClicked(e: ActionEvent) {
         if (dataTable == null) {
             return
@@ -240,7 +253,17 @@ class UIController {
 
             val laptopListModel = dataTable?.model as LaptopTableModel
             val laptopList = laptopListModel.laptopListWithoutDuplicates()
-            databaseManager.saveLaptopListToDatabase(selectedFile.path, laptopList)
+            try {
+                databaseManager.saveLaptopListToDatabase(selectedFile.path, laptopList)
+            } catch (sqliteException: ExposedSQLException) {
+                // 19 -> unique constraint error
+                if(sqliteException.errorCode == 19) {
+                    showErrorBox("Data integrity error", "You have duplicate IDs in table, fix it to save the data in database")
+                    // the program has already overwritten the database, so restore last backup
+                    databaseManager.restoreLastBackup(selectedFile.path)
+                    return
+                }
+            }
 
             laptopListModel.resetModificationState()
             refreshGUI()
