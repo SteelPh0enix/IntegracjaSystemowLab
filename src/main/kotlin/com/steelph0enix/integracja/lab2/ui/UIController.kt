@@ -103,11 +103,12 @@ class UIController {
 
             val laptopStringList = fixImportedLaptopPropertyList(rawCSV)
             val laptopList = laptopStringList.map { Laptop.fromStringList(it) }
-            createDataTable(LaptopTableModel(laptopList))
+            val tableModel = LaptopTableModel(laptopList)
+            createDataTable(tableModel)
 
             val rowsAmount = laptopList.size
 
-            setInfoMessage("Loaded $rowsAmount rows from CSV file $selectedFile")
+            setInfoMessage("Loaded $rowsAmount rows from CSV file with ${tableModel.duplicatesCount()} duplicates")
         }
     }
 
@@ -125,7 +126,7 @@ class UIController {
             }
 
             val laptopListModel = dataTable?.model as LaptopTableModel
-            val laptopStringList: List<List<String>> = laptopListModel.laptopList.map { it.toStringList() }
+            val laptopStringList: List<List<String>> = laptopListModel.laptopListWithoutDuplicates().map { it.toStringList() }
             val exportableLaptopList = breakLaptopPropertyListForExport(laptopStringList)
             stringListToCSVFile(selectedFile, exportableLaptopList, ';')
             laptopListModel.resetModificationState()
@@ -144,11 +145,12 @@ class UIController {
 
             val xmlModel = serializer.read(LaptopListXMLModel::class.java, selectedFile)
             val laptopList = xmlModel.laptopList.map { laptop -> laptopFromXMLModel(laptop) }
-            createDataTable(LaptopTableModel(laptopList))
+            val tableModel = LaptopTableModel(laptopList)
+            createDataTable(tableModel)
 
             val rowsAmount = laptopList.size
 
-            setInfoMessage("Loaded $rowsAmount from XML file $selectedFile")
+            setInfoMessage("Loaded $rowsAmount from XML file, with ${tableModel.duplicatesCount()} duplicates")
         }
     }
 
@@ -167,7 +169,7 @@ class UIController {
             }
 
             val laptopListModel = dataTable?.model as LaptopTableModel
-            val laptopXMLList = laptopListModel.laptopList.map { laptop ->
+            val laptopXMLList = laptopListModel.laptopListWithoutDuplicates().map { laptop ->
                 laptopToXMLModel(laptop)
             }
 

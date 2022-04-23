@@ -9,13 +9,21 @@ fun <T> isDuplicateOfPreviousElement(elements: List<T>, elementIndex: Int): Bool
     val element = elements[elementIndex]
     for (i in 0 until elementIndex) {
         if (element == elements[i]) {
-            println("Found duplicate, element $i")
             return true
         }
-        println("Element $i is not a duplicate")
     }
 
     return false
+}
+
+fun <T> isDuplicate(elements: List<T>, searchedElementIndex: Int): Boolean {
+    for (index in elements.indices) {
+        if (index != searchedElementIndex && elements[index] == elements[searchedElementIndex]) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 class LaptopTableModel(val laptopList: List<Laptop>) : AbstractTableModel() {
@@ -83,7 +91,8 @@ class LaptopTableModel(val laptopList: List<Laptop>) : AbstractTableModel() {
     private fun markDuplicates() {
         isDuplicateRowStates = mutableListOf()
         for (laptopIndex in laptopList.indices) {
-            isDuplicateRowStates.add(isDuplicateOfPreviousElement(laptopList, laptopIndex))
+//            isDuplicateRowStates.add(isDuplicateOfPreviousElement(laptopList, laptopIndex))
+            isDuplicateRowStates.add(isDuplicate(laptopList, laptopIndex))
         }
     }
 
@@ -155,4 +164,16 @@ class LaptopTableModel(val laptopList: List<Laptop>) : AbstractTableModel() {
     }
 
     fun isRowDuplicate(rowIndex: Int) = isDuplicateRowStates[rowIndex]
+    fun duplicatesCount(): Int {
+        var duplicates = 0
+        for (rowState in isDuplicateRowStates) {
+            if (rowState) duplicates++
+        }
+        return duplicates
+    }
+
+    fun laptopListWithoutDuplicates(): List<Laptop> {
+        return laptopList.filterIndexed { index, _ -> !isDuplicateRowStates[index] }
+    }
 }
+
