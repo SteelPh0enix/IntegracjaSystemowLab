@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+Main-Class: com.steelph0enix.integracja.lab2.MainKt
+
