@@ -16,9 +16,9 @@ fun <T> isDuplicateOfPreviousElement(elements: List<T>, elementIndex: Int): Bool
     return false
 }
 
-fun <T> isDuplicate(elements: List<T>, searchedElementIndex: Int): Boolean {
+fun <T> isDuplicate(elements: List<T>, searchedElementIndex: Int, comparator: (T, T) -> Boolean): Boolean {
     for (index in elements.indices) {
-        if (index != searchedElementIndex && elements[index] == elements[searchedElementIndex]) {
+        if (index != searchedElementIndex && comparator(elements[index], elements[searchedElementIndex])) {
             return true;
         }
     }
@@ -26,7 +26,7 @@ fun <T> isDuplicate(elements: List<T>, searchedElementIndex: Int): Boolean {
     return false;
 }
 
-class LaptopTableModel(val laptopList: List<Laptop>) : AbstractTableModel() {
+class LaptopTableModel(val laptopList: List<Laptop>, val verifyIDs: Boolean = true) : AbstractTableModel() {
     private var isDuplicateRowStates = mutableListOf<Boolean>()
 
     init {
@@ -90,9 +90,9 @@ class LaptopTableModel(val laptopList: List<Laptop>) : AbstractTableModel() {
 
     private fun markDuplicates() {
         isDuplicateRowStates = mutableListOf()
+        val comparator = if (verifyIDs) Laptop::equals else Laptop::equalsExceptID
         for (laptopIndex in laptopList.indices) {
-//            isDuplicateRowStates.add(isDuplicateOfPreviousElement(laptopList, laptopIndex))
-            isDuplicateRowStates.add(isDuplicate(laptopList, laptopIndex))
+                isDuplicateRowStates.add(isDuplicate(laptopList, laptopIndex, comparator))
         }
     }
 

@@ -96,23 +96,67 @@ class Laptop(
     External drive: $externalDriveType
 """
 
-    override fun equals(other: Any?): Boolean {
-        val otherLaptop = other as Laptop
-        return otherLaptop.manufacturer == manufacturer &&
-                otherLaptop.screenDiagonalInches == screenDiagonalInches &&
-                otherLaptop.screenResolution == screenResolution &&
-                otherLaptop.screenSurfaceType == screenSurfaceType &&
-                otherLaptop.hasTouchscreen == hasTouchscreen &&
-                otherLaptop.cpuName == cpuName &&
-                otherLaptop.physicalCoresCount == physicalCoresCount &&
-                otherLaptop.cpuFrequencyMHz == cpuFrequencyMHz &&
-                otherLaptop.ramSizeGB == ramSizeGB &&
-                otherLaptop.hardDriveCapacityGB == hardDriveCapacityGB &&
-                otherLaptop.hardDriveType == hardDriveType &&
-                otherLaptop.gpuName == gpuName &&
-                otherLaptop.gpuMemorySizeGB == gpuMemorySizeGB &&
-                otherLaptop.osName == osName &&
-                otherLaptop.externalDriveType == externalDriveType
+    fun equalsExceptID(other: Laptop): Boolean {
+        return other.manufacturer == manufacturer &&
+                other.screenDiagonalInches == screenDiagonalInches &&
+                other.screenResolution == screenResolution &&
+                other.screenSurfaceType == screenSurfaceType &&
+                other.hasTouchscreen == hasTouchscreen &&
+                other.cpuName == cpuName &&
+                other.physicalCoresCount == physicalCoresCount &&
+                other.cpuFrequencyMHz == cpuFrequencyMHz &&
+                other.ramSizeGB == ramSizeGB &&
+                other.hardDriveCapacityGB == hardDriveCapacityGB &&
+                other.hardDriveType == hardDriveType &&
+                other.gpuName == gpuName &&
+                other.gpuMemorySizeGB == gpuMemorySizeGB &&
+                other.osName == osName &&
+                other.externalDriveType == externalDriveType
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Laptop
+
+        if (id != other.id) return false
+        if (manufacturer != other.manufacturer) return false
+        if (screenDiagonalInches != other.screenDiagonalInches) return false
+        if (screenResolution != other.screenResolution) return false
+        if (screenSurfaceType != other.screenSurfaceType) return false
+        if (hasTouchscreen != other.hasTouchscreen) return false
+        if (cpuName != other.cpuName) return false
+        if (physicalCoresCount != other.physicalCoresCount) return false
+        if (cpuFrequencyMHz != other.cpuFrequencyMHz) return false
+        if (ramSizeGB != other.ramSizeGB) return false
+        if (hardDriveCapacityGB != other.hardDriveCapacityGB) return false
+        if (hardDriveType != other.hardDriveType) return false
+        if (gpuName != other.gpuName) return false
+        if (gpuMemorySizeGB != other.gpuMemorySizeGB) return false
+        if (osName != other.osName) return false
+        if (externalDriveType != other.externalDriveType) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = id
+        result = 31 * result + (manufacturer?.hashCode() ?: 0)
+        result = 31 * result + (screenDiagonalInches?.hashCode() ?: 0)
+        result = 31 * result + (screenResolution?.hashCode() ?: 0)
+        result = 31 * result + (screenSurfaceType?.hashCode() ?: 0)
+        result = 31 * result + (hasTouchscreen?.hashCode() ?: 0)
+        result = 31 * result + (cpuName?.hashCode() ?: 0)
+        result = 31 * result + (physicalCoresCount ?: 0)
+        result = 31 * result + (cpuFrequencyMHz ?: 0)
+        result = 31 * result + (ramSizeGB ?: 0)
+        result = 31 * result + (hardDriveCapacityGB ?: 0)
+        result = 31 * result + (hardDriveType?.hashCode() ?: 0)
+        result = 31 * result + (gpuName?.hashCode() ?: 0)
+        result = 31 * result + (gpuMemorySizeGB ?: 0)
+        result = 31 * result + (osName?.hashCode() ?: 0)
+        result = 31 * result + (externalDriveType?.hashCode() ?: 0)
+        return result
+    }
 }

@@ -32,6 +32,7 @@ class UIController {
     private val saveDataToDatabase = JButton("Save data to database")
     private val loadDataFromDatabase = JButton("Load data from database")
     private val userMessageLabel = JLabel("")
+    private val verifyIDsCheckbox = JCheckBox("Verify IDs duplication")
     private var dataTable: JTable? = null
     private var dataTablePane: JScrollPane? = null
     private val databaseManager = SQLiteManager()
@@ -95,6 +96,10 @@ class UIController {
 
         val utilsPanel = JPanel()
         utilsPanel.border = EmptyBorder(5, 5, 5, 5)
+
+        verifyIDsCheckbox.addActionListener(this::onVerifyIDsCheckboxStateChanged)
+        utilsPanel.add(verifyIDsCheckbox)
+
         utilsPanel.add(userMessageLabel)
 
         contentFrame.add(buttonsPanel, BorderLayout.PAGE_START)
@@ -103,6 +108,14 @@ class UIController {
         contentFrame.setLocationRelativeTo(null)
         contentFrame.isVisible = true
     }
+
+    private fun onVerifyIDsCheckboxStateChanged(e: ActionEvent) {
+        if (dataTable != null) {
+            reloadTable()
+        }
+    }
+
+    private fun shouldVerifyIDs() = verifyIDsCheckbox.isSelected
 
     private fun onLoadDataFromCSVClicked(e: ActionEvent) {
         val fileChooser = JFileChooser()
@@ -113,7 +126,7 @@ class UIController {
 
             val laptopStringList = fixImportedLaptopPropertyList(rawCSV)
             val laptopList = laptopStringList.map { Laptop.fromStringList(it) }
-            val tableModel = LaptopTableModel(laptopList)
+            val tableModel = LaptopTableModel(laptopList, shouldVerifyIDs())
             createDataTable(tableModel)
 
             val rowsAmount = laptopList.size
@@ -156,7 +169,7 @@ class UIController {
 
             val xmlModel = serializer.read(LaptopListXMLModel::class.java, selectedFile)
             val laptopList = xmlModel.laptopList.map { laptop -> laptopFromXMLModel(laptop) }
-            val tableModel = LaptopTableModel(laptopList)
+            val tableModel = LaptopTableModel(laptopList, shouldVerifyIDs())
             createDataTable(tableModel)
 
             val rowsAmount = laptopList.size
@@ -203,7 +216,7 @@ class UIController {
             val serializer = Persister()
 
             val laptopList = databaseManager.readLaptopListFromDatabase(selectedFile.path)
-            val tableModel = LaptopTableModel(laptopList)
+            val tableModel = LaptopTableModel(laptopList, shouldVerifyIDs())
             createDataTable(tableModel)
 
             val rowsAmount = laptopList.size
@@ -234,6 +247,15 @@ class UIController {
 
             setInfoMessage("Data saved in SQLite database in $selectedFile")
         }
+    }
+
+    private fun reloadTable() {
+        val laptopListModel = dataTable?.model as LaptopTableModel
+        val laptopList = laptopListModel.laptopList
+        val tableModel = LaptopTableModel(laptopList, shouldVerifyIDs())
+        createDataTable(tableModel)
+
+        setInfoMessage("Reloaded table data, ${laptopList.size} items and ${tableModel.duplicatesCount()} duplicates")
     }
 
     private fun refreshGUI() {
