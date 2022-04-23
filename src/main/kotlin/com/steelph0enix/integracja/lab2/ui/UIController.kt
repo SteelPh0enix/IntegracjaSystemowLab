@@ -24,7 +24,7 @@ import javax.swing.table.DefaultTableCellRenderer
 import javax.swing.table.TableModel
 
 class UIController {
-    private val contentFrame = JFrame("Lab2 - Wojciech Olech - Integracja systemów")
+    private val contentFrame = JFrame("Lab 4 - Wojciech Olech - Integracja systemów")
     private val loadDataFromCSVButton = JButton("Load data from CSV")
     private val saveDataToCSVButton = JButton("Save data to CSV")
     private val loadDataFromXMLButton = JButton("Load data from XML")
